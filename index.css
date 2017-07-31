@@ -1,0 +1,35 @@
+body{
+  text-align:center;
+  font-family:sans-serif;
+}
+.board{
+  height:308px;
+  width:320px;
+  margin: 0 auto;
+  border:1px solid black;
+  padding:5px;
+}
+.u > div, .m > div, .l > div{
+  float:left;
+  height:100px;
+  width:100px;
+  display:inline;
+}
+.mm{
+}
+.um, .mr, .ml, .lm{
+  border:4px solid black;
+}
+.um{border-top:0px;
+  border-bottom:0px;}
+.mr{border-right:0px;
+margin-left:-8px;}
+.ml{border-left:0px;
+margin-left:4px;}
+.lm{border-bottom:0px;
+margin-top:-4px;}
+.mm{border-top:4px solid black;}
+img{
+  max-width:100%;
+  max-height:100%;
+}
