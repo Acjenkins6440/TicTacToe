@@ -31,15 +31,20 @@ function play2(){
 //AI function for single player
 function allowAI(){
   console.log('AI running');
-  var rand = Math.floor(Math.random() * 5) + 1;
+  var rand = Math.floor(Math.random() * 4) + 1;
   if(rand == 2){rand = 3;}
   else if(rand == 3){rand = 5;}
   else if (rand == 4){rand = 7;}
-  else if (rand == 5){rand = 9;}
-  if(arrx.includes(rand) || arro.includes(rand)){
-    if (rand == 9){rand -= 2;}
-    else{rand += 2;}}
-  if(count == 1 || count == 0){
+  if(arrx.includes(rand) || arro.includes(rand)){rand += 2;}
+  if($(".count").text() == 'Draw!'){
+    if (play1 == 1){$(".count").html('<h2>Draw! X Goes First!</h2>');}
+    else if(play1 == 2){
+      $(".count").html("<h2>Draw! O Goes First!</h2>");
+      x = 2;
+    }
+    return;
+  }
+  if((winner != play1) && (count == 1 || count == 0)){
     $("#" + rand).click();
     return;
   }
@@ -86,6 +91,7 @@ function allowAI(){
                 return;
               }
             }
+
           }
       }
         else if (play1 == 2){
@@ -171,12 +177,25 @@ function reset(){
     $(".count").html("<h2>New Game! X Goes First!</h2>")
     x = 1;
   }
-  else {
-    $(".count").html("<h2>New Game! O Goes First!</h2>")
-    x=0;
+  else if (winner === 0){
+    console.log('draw');
+    if(play1 == 1){
+      winner = 1;
+      $(".count").html("<h2>New Game! X Goes First!</h2>")
+      x = 1;
+    }
+    else if(play2 == 2){
+      winner = 2;
+      $(".count").html("<h2>New Game! O Goes First!</h2>")
+      x = 0;
+    }
+
   }
-  if (winner != play1){
-    setTimeout(allowAI(), 1000);
+  if (winner != play1 && play1 == 1 && ai == 1){
+    allowAI();
+  }
+  else if (winner != play1 && play1 == 2 && ai == 1){
+    allowAI();
   }
 
 }
@@ -189,6 +208,7 @@ function PutXorO(){
   if(x % 2 === 0){
     arro.push(parseInt($(this).attr('id')));
     $(this).html('<img src="'+O+'">');
+    console.log($(this).css('height'));
       count += 1;
       x += 1;}
   else{
@@ -197,33 +217,42 @@ function PutXorO(){
       count += 1;
       x += 1;
       }
-  if (count == 9 ){
-    $(".count").html('<h2>Draw!<h2>');
-    winner = 0;
-    $('.u').children().click(reset);
+
+  if (count > 4){
+    if (checkWin()){
+      return;
+    }
   }
-  if (count > 4){checkWin();}
+    if (count == 9 ){
+      $(".count").html('<h2>Draw!<h2>');
+      winner = 0;
+      $('.u').children().click(reset);
+      arro = [];
+      arrx = [];
+      return;
+    }
   console.log("winner>> " + winner);
   console.log('count >> ' + count);
   console.log('play1 >> ' + play1);
   if(winner == 0 && ai == 1){
     if(count % 2 !== 0){
+      console.log('A');
       allowAI();
+      return;
     }
   }
   else if(winner == play1 && ai == 1){
     if(count %  2 !== 0){
+      console.log('B');
       allowAI();
+      return;
     }
   }
   else if ((winner != play1) && ai ==1){
     if(count % 2 != 1){
+      console.log('C');
       allowAI();
-    }
-  }
-  else if (winner == play2 && ai == 1){
-    if(count % 2 == 0){
-      allowAI();
+      return;
     }
   }
 
@@ -240,6 +269,7 @@ function checkWin(){
       if(arro.includes(winners[i][j])){
         y += 1;
         if(y == 3){
+          winner = 2;
           arro = [];
           arrx = [];
           if (play1 == 1){score2 += 1;}
@@ -248,13 +278,13 @@ function checkWin(){
           $("#Score2").text("Player 2: " + ' ' + score2);
           $(".count").html('<h2>O wins!<h2>');
           $('.u').children().click(reset);
-          winner = 2;
-          break;
+          return true;
           }
       }
       else if (arrx.includes(winners[i][j])){
         z += 1;
         if (z == 3){
+          winner = 1;
           arrx = [];
           arro = [];
           if(play1 == 1){score1 += 1;}
@@ -263,12 +293,12 @@ function checkWin(){
           $("#Score2").text("Player 2: " + score2);
           $(".count").html('<h2>X wins!<h2>');
           $('.u').children().click(reset);
-          winner = 1;
-          break;
+          return true;
         }
       }
     }
   }
+  return false;
 }
 
 //ClickHandlerEvents, start off with intro and set blnk to blank .u.children()
